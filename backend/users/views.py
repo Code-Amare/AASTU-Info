@@ -13,7 +13,6 @@ from axes.handlers.proxy import AxesProxyHandler
 
 from .serializers import (
     UserSerializer,
-    RegisterSerializer,
     RequestPasswordResetSerializer,
     ResetPasswordConfirmSerializer,
     ChangePasswordSerializer,
