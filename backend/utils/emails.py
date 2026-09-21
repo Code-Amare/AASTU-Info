@@ -1,5 +1,3 @@
-# utils/emails.py
-
 from django.conf import settings
 
 from .send_email import send_email

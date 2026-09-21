@@ -83,39 +83,6 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True,
-        style={"input_type": "password"},
-        validators=[validate_password],
-    )
-
-    class Meta:
-        model = User
-        fields = [
-            "username",
-            "email",
-            "password",
-            "first_name",
-            "middle_name",
-            "last_name",
-            "phone_number",
-            "date_of_birth",
-        ]
-
-    def create(self, validated_data):
-        password = validated_data.pop("password")
-
-        user = User(
-            is_owner=True,
-            email_verified=False,
-            **validated_data,
-        )
-        user.set_password(password)
-        user.save()
-        return user
-
-
 class RequestPasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
