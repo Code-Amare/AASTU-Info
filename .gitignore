@@ -10,3 +10,6 @@ backend/.env*
 
 mobile/.env*
 !mobile/.env-example
+
+
+certs
