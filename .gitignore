@@ -11,5 +11,5 @@ backend/.env*
 mobile/.env*
 !mobile/.env-example
 
-
+backend/staticfiles
 certs
