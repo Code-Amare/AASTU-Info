@@ -1,0 +1,12 @@
+# Python virtual environment
+backend/venv/
+
+# SQLite database
+backend/sqlite3.db
+
+# Environment variables
+backend/.env*
+!backend/.env-example
+
+mobile/.env*
+!mobile/.env-example
