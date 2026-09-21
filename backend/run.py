@@ -3,11 +3,10 @@ import sys
 import subprocess
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CERT_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "certs", "cert.pem"))
-KEY_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "certs", "key.pem"))
 
-IS_WINDOWS = os.name == "nt"
-NEW_PROCESS_GROUP = subprocess.CREATE_NEW_PROCESS_GROUP if IS_WINDOWS else 0
+CERT_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "certs", "cert.pem"))
+
+KEY_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "certs", "key.pem"))
 
 
 def main():
@@ -19,30 +18,6 @@ def main():
         sys.exit(1)
 
     python = sys.executable
-
-    celery_worker_cmd = [
-        python,
-        "-m",
-        "celery",
-        "-A",
-        "core",
-        "worker",
-        "-l",
-        "info",
-        "--pool=solo",
-    ]
-    celery_beat_cmd = [
-        python,
-        "-m",
-        "celery",
-        "-A",
-        "core",
-        "beat",
-        "-l",
-        "info",
-        "--scheduler",
-        "django_celery_beat.schedulers:DatabaseScheduler",
-    ]
 
     uvicorn_cmd = [
         python,
@@ -68,23 +43,10 @@ def main():
     print("Certificate:", CERT_PATH)
     print("Key:", KEY_PATH)
 
-    worker = subprocess.Popen(
-        celery_worker_cmd, cwd=BASE_DIR, creationflags=NEW_PROCESS_GROUP
+    subprocess.run(
+        uvicorn_cmd,
+        cwd=BASE_DIR,
     )
-    beat = subprocess.Popen(
-        celery_beat_cmd, cwd=BASE_DIR, creationflags=NEW_PROCESS_GROUP
-    )
-
-    try:
-        subprocess.run(uvicorn_cmd, cwd=BASE_DIR)
-    finally:
-        for p in (worker, beat):
-            p.terminate()
-        for p in (worker, beat):
-            try:
-                p.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                p.kill()
 
 
 if __name__ == "__main__":
