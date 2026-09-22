@@ -11,31 +11,25 @@ function AppNavigator() {
   const segments = useSegments();
   const router = useRouter();
 
+  const isInsidePublic = segments[0] === "(public)";
+
   useEffect(() => {
     if (isLoading) return;
 
-    const currentGroup = segments[0];
-
-    if (user) {
-      if (currentGroup !== "(auth)") {
-        router.replace("/(auth)/login");
-      }
-    } else {
-      if (currentGroup !== "(public)") {
-        router.replace("/(public)/index");
-      }
+    // User is NOT logged in and trying to access protected screen
+    if (!user && !isInsidePublic) {
+      router.replace("/(public)");
     }
-  }, [user, isLoading, segments, router]);
+    // User IS logged in and trying to access public/login screen
+    else if (user && isInsidePublic) {
+      router.replace("/");
+    }
+  }, [user, isLoading, segments]);
 
-  if (isLoading) {
+  // Prevent rendering <Stack /> until loading is done and auth redirect decision is complete
+  if (isLoading || (!user && !isInsidePublic)) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" />
       </View>
     );

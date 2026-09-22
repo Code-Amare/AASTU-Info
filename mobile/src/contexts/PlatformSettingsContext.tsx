@@ -9,11 +9,21 @@ import React, {
 
 import api from "@/services/api";
 
+// 1. Raw structure returned by the backend
+interface ApiPlatformSettings {
+  site_name: string;
+  site_logo: string;
+  support_email: string;
+  support_phone: string;
+  updated_at: string;
+}
+
+// 2. Mapped structure used in your React application
 export interface PlatformSettings {
   siteName: string;
   siteLogo: string;
   supportEmail: string;
-  supportPhoneNumber: number;
+  supportPhoneNumber: string; // Keep as string to avoid dropping leading zeros (e.g., "0980495484")
 }
 
 interface PlatformSettingsContextValue {
@@ -21,12 +31,11 @@ interface PlatformSettingsContextValue {
   isLoading: boolean;
 }
 
-const PlatformSettingsContext =
-  createContext<PlatformSettingsContextValue | undefined>(undefined);
+const PlatformSettingsContext = createContext<
+  PlatformSettingsContextValue | undefined
+>(undefined);
 
-export function PlatformSettingsProvider({
-  children,
-}: PropsWithChildren) {
+export function PlatformSettingsProvider({ children }: PropsWithChildren) {
   const [platformSettings, setPlatformSettings] =
     useState<PlatformSettings | null>(null);
 
@@ -37,14 +46,22 @@ export function PlatformSettingsProvider({
 
     const getSettings = async () => {
       try {
-        const response = await api.get<PlatformSettings>(
-          "/api/console/settings/"
+        const response = await api.get<ApiPlatformSettings>(
+          "/api/console/settings/",
         );
 
         if (mounted) {
-          setPlatformSettings(response.data);
+          const raw = response.data;
+          // Map backend snake_case keys to frontend camelCase properties
+          setPlatformSettings({
+            siteName: raw.site_name,
+            siteLogo: raw.site_logo,
+            supportEmail: raw.support_email,
+            supportPhoneNumber: raw.support_phone,
+          });
         }
-      } catch {
+      } catch (err) {
+        console.error(err);
         if (mounted) {
           setPlatformSettings(null);
         }
@@ -67,7 +84,7 @@ export function PlatformSettingsProvider({
       platformSettings,
       isLoading,
     }),
-    [platformSettings, isLoading]
+    [platformSettings, isLoading],
   );
 
   return (
@@ -82,7 +99,7 @@ export function usePlatformSettings() {
 
   if (!context) {
     throw new Error(
-      "usePlatformSettings must be used within a PlatformSettingsProvider"
+      "usePlatformSettings must be used within a PlatformSettingsProvider",
     );
   }
 
