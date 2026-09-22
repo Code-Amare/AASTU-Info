@@ -1,3 +1,4 @@
 from django.contrib import admin
+from .models import User, EmailLoginLink, EmailOTP, ResetPasswordLink
 
-# Register your models here.
+admin.site.register([User, EmailOTP, EmailLoginLink, ResetPasswordLink])
