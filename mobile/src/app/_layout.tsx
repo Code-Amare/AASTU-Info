@@ -5,29 +5,32 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { PlatformSettingsProvider } from "@/contexts/PlatformSettingsContext";
-
 function AppNavigator() {
   const { user, isLoading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   const isInsidePublic = segments[0] === "(public)";
+  const isInsideAuth = segments[0] === "(auth)";
+
+  // Routes accessible without authentication
+  const isUnprotectedRoute = isInsidePublic || isInsideAuth;
 
   useEffect(() => {
     if (isLoading) return;
 
-    // User is NOT logged in and trying to access protected screen
-    if (!user && !isInsidePublic) {
-      router.replace("/(public)");
+    // User is NOT logged in and trying to access a protected screen
+    if (!user && !isUnprotectedRoute) {
+      router.replace("/(auth)");
     }
-    // User IS logged in and trying to access public/login screen
+    // User IS logged in and inside (public) screen (optional redirect to app home)
     else if (user && isInsidePublic) {
       router.replace("/");
     }
   }, [user, isLoading, segments]);
 
-  // Prevent rendering <Stack /> until loading is done and auth redirect decision is complete
-  if (isLoading || (!user && !isInsidePublic)) {
+  // Prevent rendering <Stack /> until loading is done and auth redirect check passes
+  if (isLoading || (!user && !isUnprotectedRoute)) {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" />
@@ -37,7 +40,6 @@ function AppNavigator() {
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }
-
 export default function RootLayout() {
   return (
     <SafeAreaProvider>

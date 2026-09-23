@@ -1,4 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import {
   Text,
   Image,
@@ -10,6 +11,7 @@ import { usePlatformSettings } from "@/contexts/PlatformSettingsContext";
 
 export default function HomeScreen() {
   const { platformSettings, isLoading } = usePlatformSettings();
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -47,7 +49,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            // Navigation logic
+            router.push("/(auth)/login");
           }}
           className="w-full bg-[#1d4f8f] py-4 rounded-2xl items-center justify-center"
         >
