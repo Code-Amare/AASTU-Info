@@ -4,4 +4,5 @@ from .views import TestView
 urlpatterns = [
     path("test/", TestView.as_view()),
     path("users/", include("users.urls")),
+    path("console/", include("console.urls")),
 ]
