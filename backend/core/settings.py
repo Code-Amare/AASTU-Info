@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "api",
     "console",
     "users",
+    "announcements",
 ]
 
 MIDDLEWARE = [
