@@ -53,6 +53,15 @@ def generate_tokens_for_user(request, user):
     return response
 
 
+class MeView(APIView):
+    def get(self, request):
+        user = request.user
+        return Response(
+            {"user": UserSerializer(user).data},
+            status=status.HTTP_200_OK,
+        )
+
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []

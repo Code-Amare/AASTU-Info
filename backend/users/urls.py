@@ -9,9 +9,11 @@ from .views import (
     ResetPasswordConfirmView,
     ChangePasswordView,
     EmailLoginRequestView,
+    MeView,
 )
 
 urlpatterns = [
+    path("me/", MeView.as_view()),
     path("login/", LoginView.as_view()),
     path("login/email/request/", EmailLoginRequestView.as_view()),
     path("login/email/<uuid:code>/", LoginViaEmailView.as_view()),
