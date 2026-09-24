@@ -409,19 +409,6 @@ class EmailVerifyView(APIView):
         return generate_tokens_for_user(request, user)
 
 
-class LogoutView(APIView):
-
-    def post(self, request):
-        response = Response(
-            {"detail": "Logged out successfully."}, status=status.HTTP_200_OK
-        )
-
-        response.delete_cookie("access_token")
-        response.delete_cookie("refresh_token")
-        response.delete_cookie("csrftoken")
-        return response
-
-
 class RequestPasswordResetView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []

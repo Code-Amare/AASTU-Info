@@ -5,7 +5,6 @@ from .views import (
     LoginViaEmailView,
     SendVerificationCodeView,
     EmailVerifyView,
-    LogoutView,
     RequestPasswordResetView,
     ResetPasswordConfirmView,
     ChangePasswordView,
@@ -14,7 +13,6 @@ from .views import (
 
 urlpatterns = [
     path("login/", LoginView.as_view()),
-    path("logout/", LogoutView.as_view()),
     path("login/email/request/", EmailLoginRequestView.as_view()),
     path("login/email/<uuid:code>/", LoginViaEmailView.as_view()),
     path("email/verify/request/", SendVerificationCodeView.as_view()),
