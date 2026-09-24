@@ -36,48 +36,22 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
-def send_cookies(request, user):
+def generate_tokens_for_user(request, user):
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
     refresh_token = str(refresh)
 
     response = Response(
         {
-            "access_length": len(access_token),
-            "refresh_length": len(refresh_token),
+            "access_length": access_token,
+            "refresh_length": refresh_token,
             "user": UserSerializer(user).data,
         },
         status=status.HTTP_200_OK,
     )
 
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        secure=True,
-        samesite="Lax",
-        max_age=60 * 15,
-    )
-
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        httponly=True,
-        secure=True,
-        samesite="Lax",
-        max_age=60 * 60 * 24 * 7,
-    )
-
-    csrf_token = get_token(request)
-    response.set_cookie(
-        "csrftoken",
-        csrf_token,
-        httponly=False,
-        secure=True,
-        samesite="Lax",
-    )
-
     return response
+
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -196,7 +170,7 @@ class LoginView(APIView):
         except Exception:
             logger.exception("Failed to send login alert email for user %s", user.pk)
 
-        return send_cookies(request, user)
+        return generate_tokens_for_user(request, user)
 
 
 class EmailLoginRequestView(APIView):
@@ -277,7 +251,7 @@ class LoginViaEmailView(APIView):
             reset(username=user.email)
             login_link.delete()
 
-        return send_cookies(request, user)
+        return generate_tokens_for_user(request, user)
 
 
 class SendVerificationCodeView(APIView):
@@ -432,7 +406,7 @@ class EmailVerifyView(APIView):
             user.save(update_fields=["email_verified"])
             otp.delete()
 
-        return send_cookies(request, user)
+        return generate_tokens_for_user(request, user)
 
 
 class LogoutView(APIView):
