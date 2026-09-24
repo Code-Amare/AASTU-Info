@@ -21,7 +21,6 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "first_name",
-            "middle_name",
             "last_name",
             "full_name",
             "phone_number",
@@ -29,7 +28,6 @@ class UserSerializer(serializers.ModelSerializer):
             "profile_picture",
             "email_verified",
             "two_factor_enabled",
-            "is_owner",
             "is_staff",
             "is_superuser",
         ]
@@ -38,7 +36,6 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "full_name",
-            "is_owner",
             "is_staff",
             "is_superuser",
         ]
@@ -54,11 +51,7 @@ class UserSerializer(serializers.ModelSerializer):
             is_privileged = (
                 request
                 and request.user.is_authenticated
-                and (
-                    request.user.is_owner
-                    or request.user.is_staff
-                    or request.user.is_superuser
-                )
+                and (request.user.is_staff or request.user.is_superuser)
             )
 
             if not (is_self or is_privileged):

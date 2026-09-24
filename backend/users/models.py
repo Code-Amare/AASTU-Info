@@ -31,6 +31,10 @@ class User(AbstractUser):
         null=True,
     )
 
+    two_factor_enabled = models.BooleanField(default=False)
+    email_verified = models.BooleanField(default=False)
+    phone_number = models.PositiveBigIntegerField()
+
 
 class EmailOTP(models.Model):
     class Purpose(models.TextChoices):
