@@ -7,12 +7,7 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile_picture = serializers.ImageField(
-        required=False,
-        allow_null=True,
-    )
-
-    full_name = serializers.ReadOnlyField()
+    full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -23,31 +18,39 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "full_name",
+            "role",
             "phone_number",
             "date_of_birth",
             "profile_picture",
+            "department",
+            "section",
             "email_verified",
             "two_factor_enabled",
             "is_staff",
             "is_superuser",
         ]
+
         read_only_fields = [
             "id",
             "username",
             "email",
             "full_name",
+            "email_verified",
             "is_staff",
             "is_superuser",
         ]
 
+    def get_full_name(self, obj):
+        return obj.get_full_name()
+
     def update(self, instance, validated_data):
         request = self.context.get("request")
-        old_picture = None
 
         if "profile_picture" in validated_data:
             is_self = (
                 request and request.user.is_authenticated and request.user == instance
             )
+
             is_privileged = (
                 request
                 and request.user.is_authenticated
@@ -64,16 +67,7 @@ class UserSerializer(serializers.ModelSerializer):
                     }
                 )
 
-            old_picture = instance.profile_picture or None
-            # "profile_picture" stays in validated_data — super().update()
-            # sets and saves it normally along with every other field.
-
-        instance = super().update(instance, validated_data)
-
-        if old_picture:
-            old_picture.delete(save=False)  # instance already saved above
-
-        return instance
+        return super().update(instance, validated_data)
 
 
 class RequestPasswordResetSerializer(serializers.Serializer):
