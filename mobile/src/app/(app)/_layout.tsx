@@ -13,7 +13,6 @@ export default function AppLayout() {
     );
   }
 
-  // If user is not logged in, redirect to (public)
   if (!user) {
     return <Redirect href="/(public)" />;
   }

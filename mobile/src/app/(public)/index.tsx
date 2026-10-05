@@ -22,7 +22,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-200">
+    <SafeAreaView className="flex-1">
       {/* 1. FIXED TOP LOGO ZONE */}
       <View className="items-center mt-14">
         {platformSettings?.siteLogo && (
@@ -49,7 +49,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            router.push("/(auth)/login");
+            router.push("/(public)/login");
           }}
           className="w-full bg-[#1d4f8f] py-4 rounded-2xl items-center justify-center"
         >

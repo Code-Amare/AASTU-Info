@@ -5,7 +5,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider className="bg-red-400">
       <AuthProvider>
         <Stack screenOptions={{ headerShown: false }} />
       </AuthProvider>
